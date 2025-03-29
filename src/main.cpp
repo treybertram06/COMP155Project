@@ -116,6 +116,7 @@ void admin_interface(User* user, vector<User*>& users) {
                 cout << "Select a request to update: \n";
                 int index = 0;
                 int selection;
+                string new_status;
                 auto& requests = LeaveManager::get_instance().get_requests();
                 for (auto& request : requests) {
                     cout << ++index << ": ";
@@ -124,7 +125,9 @@ void admin_interface(User* user, vector<User*>& users) {
                 }
                 cout << "Select a request to update: ";
                 cin >> selection;
-                ////select a request then give the option to approve or deny
+                cout << "Enter updated status (Approved/Denied): ";
+                cin >> new_status;
+                requests[selection-1].update_status(new_status);
             }
             break;
 

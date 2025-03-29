@@ -9,4 +9,4 @@ add_executable(COMP155Project src/main.cpp
         include/administrator.h
         include/helper.h
         include/leave_request.h
-        include/leavemanager.h)
+        include/leave_manager.h)

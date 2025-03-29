@@ -35,7 +35,7 @@ public:
 
     string get_status() { return status; }
 
-    void update_status(string new_status);
+    void update_status(string new_status) { status = new_status; }
 
     string get_date();
 

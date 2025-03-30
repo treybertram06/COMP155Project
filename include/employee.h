@@ -33,6 +33,8 @@ public:
 
     int get_leave_balance() { return leave_balance; }
 
+    void set_leave_balance(int updated) { leave_balance = updated; }
+
     void display_info() override {
         cout << "Employee: " << username << " | ID: " << ID << " | Position: " << position << " | Leave Balance: " << leave_balance << endl;
     }

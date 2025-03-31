@@ -42,7 +42,7 @@ public:
     void display_info() {
         std::cout << "Employee: " << employee_ID
                       << "\nStart Date: " << int_to_date(start_date)
-                      << "\nEnd Date: " << int_to_date(days)
+                      << "\nEnd Date: " << int_to_date(start_date + days)
                       << "\nReason: " << leave_type
                       << "\nStatus: " << status
                       << "\n---------------------\n";

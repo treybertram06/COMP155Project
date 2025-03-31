@@ -141,11 +141,10 @@ void admin_interface(User* user, vector<User*>& users) {
                 if (emp_index >= 0 && emp_index < users.size() && dynamic_cast<Employee*>(users[emp_index])) {
                     Employee* emp = dynamic_cast<Employee*>(users[emp_index]);
                     cout << "Removing employee: ";
-                    emp->display_info();  // Show info of the employee to be removed
+                    emp->display_info();
 
-                    // Properly delete and remove employee
                     delete emp;
-                    users.erase(users.begin() + emp_index);  // Safely remove from vector
+                    users.erase(users.begin() + emp_index);
                     cout << "Employee removed successfully.\n";
                 } else {
                     cout << "Invalid index or employee not found.\n";

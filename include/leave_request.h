@@ -18,11 +18,11 @@ private:
     int request_ID;
     int employee_ID;
     string status;
-
-public:
     string leave_type;
     int start_date;
     int days;
+
+public:
 
     LeaveRequest(int request_ID, int employee_ID, string leave_type, int start_date, int days)
     : request_ID(request_ID), employee_ID(employee_ID), leave_type(leave_type), start_date(start_date), days(days) {

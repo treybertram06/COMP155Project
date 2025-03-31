@@ -19,13 +19,15 @@ Principles to Use:
 #include "../include/user.h"
 #include "../include/employee.h"
 #include "../include/administrator.h"
-#include <iostream>
-#include <vector>
+
 
 using namespace std;
 
 void save_data_to_file(vector<User*>& users, LeaveManager& leave_manager) {
     ofstream data_file("data.txt");
+
+    data_file << "Index " << current_id << endl;
+
     for (auto& user : users) {
         user->save_to_file(data_file);
     }
@@ -36,6 +38,7 @@ void save_data_to_file(vector<User*>& users, LeaveManager& leave_manager) {
         req.save_to_file(data_file);
     }
     data_file.close();
+
 }
 
 vector<User*> load_data_from_file() {
@@ -68,6 +71,13 @@ vector<User*> load_data_from_file() {
             LeaveRequest request(request_ID, user_ID, status, leave_type, start_date, days);
             LeaveManager::get_instance().add_leave_request(request);
         }
+        else if (type == "#") {
+            //is a comment, do nothing
+        }
+        else if (type == "Index") {
+            stream >> current_id;
+            //clog << current_id;
+        }
     }
 
     file.close();
@@ -81,216 +91,6 @@ User* try_login(vector<User*> users, string username, string pass) {
     }
     return nullptr;
 }
-
-void list_employees(vector<User*>& users) {
-    cout << "Employee list:\n";
-    int index = 0;
-    for (auto& user : users) {
-        if (dynamic_cast<Employee*>(user)) {
-            cout << ++index << ": ";
-            user->display_info();
-        }
-    }
-    cout << endl;
-}
-
-void admin_interface(User* user, vector<User*>& users) {
-    bool done = false;
-    while (!done) {
-        int input;
-        cout << "Choose an option:\n"
-             << "1: View all employees.\n"
-             << "2: View all open leave requests.\n"
-             << "3: Remove an employee.\n"
-             << "4: Create an employee.\n"
-             << "5: Adjust employee leave balance.\n"
-             << "0: Quit.\n";
-        cin >> input;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-        switch (input) {
-            case 1: {
-                list_employees(users);
-            }
-            break;
-
-            case 2: {
-                cout << "Select a request to update: \n";
-                int index = 0;
-                int selection;
-                string new_status;
-                auto& requests = LeaveManager::get_instance().get_requests();
-                for (auto& request : requests) {
-                    cout << ++index << ": ";
-                    request.display_info();
-
-                }
-                cout << "Select a request to update: ";
-                cin >> selection;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Enter updated status (Approved/Denied): ";
-                getline(cin, new_status);
-                requests[selection-1].update_status(new_status);
-            }
-            break;
-
-            case 3: {
-                list_employees(users);
-                int emp_index;
-                cout << "Enter the index of the employee to remove: ";
-                cin >> emp_index;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-                if (emp_index >= 0 && emp_index < users.size() && dynamic_cast<Employee*>(users[emp_index])) {
-                    Employee* emp = dynamic_cast<Employee*>(users[emp_index]);
-                    cout << "Removing employee: ";
-                    emp->display_info();
-
-                    delete emp;
-                    users.erase(users.begin() + emp_index);
-                    cout << "Employee removed successfully.\n";
-                } else {
-                    cout << "Invalid index or employee not found.\n";
-                }
-            }
-            break;
-
-            case 4: {
-                string new_username, new_password, new_position;
-                int new_leave_balance;
-                char is_admin;
-
-                cout << "Is this employee an administrator? (Y/N): ";
-                cin >> is_admin;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                if (is_admin == 'N') {
-                    cout << "Enter employees new username (cannot contain whitespace): ";
-                    getline(cin, new_username);
-                    for (auto& user : users) {
-                        if (user->get_username() == new_username) {
-                            cout << "Username is already taken.\n";
-                            break;
-                        }
-                    }
-                    cout << "Enter employees new password: ";
-                    getline(cin, new_password);
-                    cout << "Enter employees new position: ";
-                    getline(cin, new_position);
-                    cout << "Enter employees leave balance: ";
-                    cin >> new_leave_balance;
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-                    users.push_back(new Employee(new_username, new_password, generate_ID(), new_position, new_leave_balance));
-                } else if (is_admin == 'Y') {
-                    cout << "Enter administrator new username: ";
-                    getline(cin, new_username);
-                    cout << "Enter administrator new password: ";
-                    getline(cin, new_password);
-                    cout << "Enter administrator new position: ";
-                    getline(cin, new_position);
-
-                    users.push_back(new Administrator(new_username, new_password, generate_ID(), new_position));
-                } else {
-                    cout << "Invalid input.\n";
-                }
-
-
-            }
-            break;
-
-            case 5: {
-                list_employees(users);
-                int emp_index, new_balance;
-                cout << "Enter the index of the employee to adjust leave balance: ";
-                cin >> emp_index;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-                if (emp_index >= 0 && emp_index < users.size() && dynamic_cast<Employee*>(users[emp_index])) {
-                    Employee* emp = dynamic_cast<Employee*>(users[emp_index]);
-                    cout << "Selected employee: ";
-                    emp->display_info();
-
-                    cout << "Enter new leave balance amount: ";
-                    cin >> new_balance;
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    emp->set_leave_balance(new_balance);
-                    cout << "Leave balance set to: " << emp->get_leave_balance() << endl;;
-                } else {
-                    cout << "Invalid index or employee not found.\n";
-                }
-            }
-            break;
-
-            case 0:
-                cout << "Quitting...\n";
-                done = true;
-                break;
-
-            default:
-                cout << "Invalid input.\n";
-                break;
-        }
-
-
-    }
-}
-
-void employee_interface(User* user_ptr) {
-    Employee* user = dynamic_cast<Employee*>(user_ptr);
-    bool done = false;
-    while (!done) {
-
-        int input;
-        cout << "Choose an option:\n"
-             << "1: Apply for leave.\n"
-             << "2: Check status of leave requests.\n"
-             << "3: Check leave balance.\n"
-             << "0: Quit.\n";
-        cin >> input;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-        switch (input) {
-            case 1: {
-                string leave_type, start_date;
-                int days;
-                cout << "Enter leave type: ";
-                getline(cin, leave_type);
-                cout << "Enter start date (MM/DD/YYYY): ";
-                getline(cin, start_date);
-                cout << "Enter number of days: ";
-                cin >> days;
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                user->apply_for_leave(start_date, days, leave_type);
-            }
-            break;
-
-            case 2: {
-                //cout << "Select an open leave request:\n";
-                auto requests = LeaveManager::get_instance().get_requests();
-                for (auto& request : requests) {
-                    if (user_ptr->get_ID() == request.get_employee_ID()) {
-                        request.display_info();
-                    }
-                }
-            }
-            break;
-
-            case 3:
-                cout << "You have " << user->get_leave_balance() << " days of leave remaining.\n";
-            break;
-
-            case 0:
-                cout << "Quitting...\n";
-            done = true;
-            break;
-
-            default:
-                cout << "Invalid input.\n";
-            break;
-        }
-    }
-}
-
 
 
 int main() {
@@ -307,8 +107,6 @@ int main() {
     if (!contains_admin) {
         users.push_back(new Administrator("admin", "admin", 0, "administrator"));
     }
-
-
 
     // Prompt for login information, try login, if valid: current_user = (ptr to user with matching login info)
     bool logged_in = false;
@@ -332,10 +130,12 @@ int main() {
     //dynamic cast will return 0 if the type of current_user is not Administrator*
     if (dynamic_cast<Administrator*>(current_user)) {
         //clog << "Is admin\n";
-        admin_interface(current_user, users);
+        Administrator user = *dynamic_cast<Administrator*>(current_user);
+        user.admin_interface(users);
     } else {
         //clog << "Is employee\n";
-        employee_interface(current_user);
+        Employee user = *dynamic_cast<Employee*>(current_user);
+        user.employee_interface();
     }
 
     save_data_to_file(users, LeaveManager::get_instance());

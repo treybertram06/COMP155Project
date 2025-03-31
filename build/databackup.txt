@@ -1,0 +1,12 @@
+# example comment in data file (must be a space separating # from text)
+# admin format is: Admin username password role
+# employee format is: Employee username password role leave_balance
+# request format is: LeaveRequest username password role leave_balance
+# comments are deleted when program runs
+Index 6
+Admin admin admin 0 administrator
+Employee TreyBertram password 0 owner 65
+Employee JohnSmith password 1 engineer 30
+Employee JaneDoe password 4 engineer 9
+LeaveRequest 2 0 Pending Vacation 227 14
+LeaveRequest 5 4 Pending Sick 79 1

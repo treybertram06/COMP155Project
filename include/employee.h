@@ -55,7 +55,61 @@ public:
     }
     */
 
-    string get_username() { return username; }
+    void employee_interface() {
+        bool done = false;
+        while (!done) {
+
+            int input;
+            cout << "Choose an option:\n"
+                 << "1: Apply for leave.\n"
+                 << "2: Check status of leave requests.\n"
+                 << "3: Check leave balance.\n"
+                 << "0: Quit.\n";
+            cin >> input;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+            switch (input) {
+                case 1: {
+                    string leave_type, start_date;
+                    int days;
+                    cout << "Enter leave type: ";
+                    getline(cin, leave_type);
+                    cout << "Enter start date (MM/DD/YYYY): ";
+                    getline(cin, start_date);
+                    cout << "Enter number of days: ";
+                    cin >> days;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    apply_for_leave(start_date, days, leave_type);
+                }
+                break;
+
+                case 2: {
+                    //cout << "Select an open leave request:\n";
+                    auto requests = LeaveManager::get_instance().get_requests();
+                    for (auto& request : requests) {
+                        if (ID == request.get_employee_ID()) {
+                            request.display_info();
+                        }
+                    }
+                }
+                break;
+
+                case 3:
+                    cout << "You have " << get_leave_balance() << " days of leave remaining.\n";
+                break;
+
+                case 0:
+                    cout << "Quitting...\n";
+                done = true;
+                break;
+
+                default:
+                    cout << "Invalid input.\n";
+                break;
+            }
+        }
+    }
+
 
 
 

@@ -21,7 +21,7 @@ public:
 
     virtual void save_to_file(std::ofstream& file) = 0;
 
-    virtual std::string get_username() = 0;
+    std::string get_username() { return username; }
 
 protected:
     std::string username, password, position;

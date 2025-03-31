@@ -6,10 +6,13 @@
 #define HELPER_H
 
 #include <string>
+#include <sstream>
 #include <ctime>
 #include <iomanip>
 
+static int current_id = 0;
 
+//source for time stuff: https://cplusplus.com/reference/ctime/tm/, https://www.geeksforgeeks.org/date-and-time-parsing-in-cpp/
 std::string int_to_date(int date) {
 
     tm start_date = {};
@@ -54,7 +57,7 @@ int date_to_int(std::string date) {
 }
 
 int generate_ID() {
-    static int current_id = 0;
+
     return current_id++;
 }
 
